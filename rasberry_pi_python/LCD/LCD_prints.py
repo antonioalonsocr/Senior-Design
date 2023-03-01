@@ -17,12 +17,20 @@ class PrintForLCD:
     def printBatteryPercentageChar(self,battPercentage):
         """Prints special character to display battery percentage.
         expects a floating point between 0 and 1"""
-        self.initChars(specChars=0)
-        if battPercentage < 0.125:   self.lcd.putchar(chr(0))
-        elif battPercentage < 0.25:  self.lcd.putchar(chr(1))
-        elif battPercentage < 0.375: self.lcd.putchar(chr(2))
-        elif battPercentage < 0.50:  self.lcd.putchar(chr(3))
-        elif battPercentage < 0.625: self.lcd.putchar(chr(4))
-        elif battPercentage < 0.75:  self.lcd.putchar(chr(5))
-        elif battPercentage < 0.875: self.lcd.putchar(chr(6))
-        else:                        self.lcd.putchar(chr(7))
+
+        # Determine what the character should look like
+        byteList = []
+        for pixLevel in range(8):
+            if battPercentage/(0.125*(pixLevel+1)) >= 1:
+                byteList = [0x1f] + byteList
+            else:
+                byteList = [(0b1111100000 >> int((battPercentage % 0.125)//0.025)) & 0x1f] + byteList
+                for _ in range(7-pixLevel):
+                    byteList = [0x00] + byteList
+                break
+
+        # set as a custom character
+        self.lcd.custom_char(0,bytearray(byteList))
+
+        # print character
+        self.lcd.putchar(0)
