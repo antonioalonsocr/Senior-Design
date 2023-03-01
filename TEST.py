@@ -4,13 +4,19 @@ def printBatt(batt):
         if batt/(0.125*(pixLevel+1)) >= 1:
             byteList = [0x1f] + byteList
         else:
-            byteList = [(0b1111100000 >> int((batt % 0.125)//0.025)) & 0x1f] + byteList
-            for i in range(7-pixLevel):
+            # Determined shift by knowing how many pixels need light
+            # One pixel is 2.5% (0.025) and one line is 12.5% (0.125)
+            shiftBy = int((batt % 0.125)//0.025)
+
+            # shiftBy is the number of pixels to turn on
+            # then bitwise & to only get last 5 bits
+            byteList = [(0b1111100000 >> shiftBy) & 0x1f] + byteList
+            for _ in range(7-pixLevel):
                 byteList = [0x00] + byteList
             break
-    print(byteList)
+        
     for elem in byteList:
         print(bin(elem))
 
 if __name__ == "__main__":
-    printBatt(0.87)
+    printBatt(0.55)
