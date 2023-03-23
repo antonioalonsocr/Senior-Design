@@ -1,7 +1,11 @@
-from machine import Pin
+from machine import Pin, I2C
 from gpio_lcd import GpioLcd
+from LCD_prints import PrintForLCD
+from readRegs import readRegs
 import utime
- 
+
+
+#utime.sleep(2)
 
 # Create the LCD object
 lcd = GpioLcd(rs_pin=Pin(16),
@@ -11,13 +15,41 @@ lcd = GpioLcd(rs_pin=Pin(16),
               d6_pin=Pin(20),
               d7_pin=Pin(21),
               num_lines=2, num_columns=40)
- 
 
-a = 56
+max17330 = I2C(id=1,scl=Pin(15),sda=Pin(14))
 
-lcd.clear()
-a_string = (hex(a))
-lcd.putstr(a_string)
+'''
+in command window:
+max17330 = I2C(id=1, scl=Pin(15), sda=Pin(14))
+bstring = max17330.readfrom_mem(0x36,0x06,2,addrsize=8)
+bstring[0] 
+bstring[1]
+'''
+
+# utime.sleep(1)
+# print(max17330.scan())
+utime.sleep(1)
+#print(max17330.readfrom_mem(0x36,0x06,2))
+max17330reg = readRegs(max17330)
+
+p = PrintForLCD(lcd=lcd)
+while True:
+    for i in range(20):
+        battPerc = max17330reg.readRepSOC()/100
+        p.printMockScreen(battAPerc = battPerc, battBPerc = 0.05*i)
+        utime.sleep(1)
+    
+#utime.sleep(2)
+
+OnBoardLed = Pin(25, Pin.OUT)
+#OnBoardLed.value(1)
+
+
+# a = 56
+# 
+# lcd.clear()
+# a_string = (hex(a))
+# lcd.putstr(a_string)
 
 
 # #The following line of codes should be tested one by one according to your needs
@@ -28,7 +60,7 @@ lcd.putstr(a_string)
 #utime.sleep(1)
 # #2. Now, to clear the display.
 #lcd.clear()
-utime.sleep(1)
+#utime.sleep(1)
 # #3. and to exactly position the cursor location
 lcd.move_to(0,1)
 # lcd.putstr('LCD16x2display')
@@ -61,3 +93,18 @@ lcd.blink_cursor_on()
 # happy_face = bytearray([0x00,0x0A,0x00,0x04,0x00,0x11,0x0E,0x00])
 # lcd.custom_char(0, happy_face)
 # lcd.putchar(chr(0))
+#OnBoardLed.value(1)
+'''
+lcd.hide_cursor()
+p = PrintForLCD(lcd=lcd)
+for i in range(21):
+    lcd.move_to(0,1)
+    p.printBatteryPercentageChar(i*0.01)
+    utime.sleep(0.1)
+    
+p.printMockScreen()
+
+for i in [0.3, 0.4, 0.8]:
+    utime.sleep(1)
+    p.assignBatteryChar(i, 0)
+'''

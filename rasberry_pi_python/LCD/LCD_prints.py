@@ -54,8 +54,9 @@ class PrintForLCD:
         self.lcd.move_to(0,0)
 
         self.assignBatteryChar(battAPerc,0)
-        self.lcd.putstr(f"Battery A: {battAPerc}% {chr(0)}")
+        self.lcd.putstr(f"Battery A: {battAPerc*100}% {chr(0)}")
 
         self.lcd.move_to(0,1)
         self.assignBatteryChar(battBPerc,1)
-        self.lcd.putstr(f"Battery B: {battBPerc}% {chr(1)}")
+        self.lcd.putstr(f"Battery B: {battBPerc*100}% {chr(1)}")
+
