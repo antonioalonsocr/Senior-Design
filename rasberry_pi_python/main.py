@@ -3,6 +3,7 @@ from gpio_lcd import GpioLcd
 from LCD_prints import PrintForLCD
 from readRegs import readRegs
 import utime
+from rasberry_pi_python.libraries import chipClasses
 
 
 #utime.sleep(2)
@@ -35,15 +36,15 @@ print('B')
 print(max17330_B.scan())
 utime.sleep(1)
 #print(max17330.readfrom_mem(0x36,0x06,2))
-max17330reg_A = readRegs(max17330_A)
-max17330reg_B = readRegs(max17330_B)
+A17330 = Max17330(max17330_A)
+B17330 = Max17330(max17330_B)
 
 p = PrintForLCD(lcd=lcd)
 
 while True:
     for i in range(20):
         try:
-            battAPerc = max17330reg_A.readRepSOC(addr=0x36,memaddr=0x06,nbytes=2)/100
+            battAPerc = A17330.readRepSOC(addr=0x36,memaddr=0x06,nbytes=2)/100
             # battPerc = max17330reg_A.readfrom_mem(0x36, 0x06, 2, 8)
         except:
             OnBoardLed = Pin(25, Pin.OUT)
