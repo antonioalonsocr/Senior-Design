@@ -2,10 +2,13 @@ from machine import Pin, I2C
 from gpio_lcd import GpioLcd
 from LCD_prints import PrintForLCD
 from readRegs import readRegs
+from chipClasses import Max17330
 import utime
 
 
 #utime.sleep(2)
+OnBoardLed = Pin(25, Pin.OUT)
+OnBoardLed.value(0)
 
 # Create the LCD object
 lcd = GpioLcd(rs_pin=Pin(16),
@@ -35,15 +38,31 @@ print('B')
 print(max17330_B.scan())
 utime.sleep(1)
 #print(max17330.readfrom_mem(0x36,0x06,2))
-max17330reg_A = readRegs(max17330_A)
-max17330reg_B = readRegs(max17330_B)
+#max17330reg_A = readRegs(max17330_A)
+#max17330reg_B = readRegs(max17330_B)
+#max17330reg_B.changeBit()
+A17330 = Max17330(max17330_A)
+B17330 = Max17330(max17330_B)
 
 p = PrintForLCD(lcd=lcd)
 
+A17330.unlockWP(addr=0x36)
+B17330.unlockWP(addr=0x76)
+
+A17330.ParEN(addr=0x36)
+B17330.ParEN(addr=0x76)
+
+A17330.AllowChgB(0x36)
+B17330.AllowChgB(0x76)
+
 while True:
-    for i in range(20):
+    
+    # Battery screen ======================================================================
+    for i in range(0):
+        A17330.AllowChgB(0x36)
+        B17330.AllowChgB(0x76)
         try:
-            battAPerc = max17330reg_A.readRepSOC(addr=0x36,memaddr=0x06,nbytes=2)/100
+            battAPerc = A17330.readRepSOC(addr=0x36)
             # battPerc = max17330reg_A.readfrom_mem(0x36, 0x06, 2, 8)
         except:
             OnBoardLed = Pin(25, Pin.OUT)
@@ -51,12 +70,35 @@ while True:
             battAPerc = 0.05*i
             
         try:
-            battBPerc = max17330reg_B.readRepSOC(addr=0x76,memaddr=0x06,nbytes=2)/100
+            battBPerc = B17330.readRepSOC(addr=0x76)
         except:
             battBPerc = 0.05*i
-            
         
-        p.printMockScreen(battAPerc = round(battAPerc,4), battBPerc = round(battBPerc,4))
+        p.printRepSOCScreen(battAPerc = battAPerc, battBPerc = battBPerc)
+        
+        utime.sleep(1)
+    
+        
+    # Charging Current screen ======================================================================
+    for i in range(5):
+        A17330.AllowChgB(0x36)
+        B17330.AllowChgB(0x76)
+        try:
+            currA = A17330.readCurrentReg(addr=0x36)
+            # battPerc = max17330reg_A.readfrom_mem(0x36, 0x06, 2, 8)
+        except:  
+             OnBoardLed.value(1)
+             currA = 0.05*i
+        try:
+            currB = B17330.readCurrentReg(addr=0x76)
+        except:
+            currB = 0.05*i
+        
+        p.printCurrScreen(battACurr = currA, battBCurr = currB)
+        
+        print("curr----------------")
+        print(currA)
+        print(currB)
         utime.sleep(1)
 
 #utime.sleep(2)
