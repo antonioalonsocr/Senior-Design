@@ -4,6 +4,7 @@ from LCD_prints import PrintForLCD
 from readRegs import readRegs
 from chipClasses import Max17330
 import utime
+from rasberry_pi_python.libraries import chipClasses
 
 
 #utime.sleep(2)
@@ -38,9 +39,12 @@ print('B')
 print(max17330_B.scan())
 utime.sleep(1)
 #print(max17330.readfrom_mem(0x36,0x06,2))
+<<<<<<< HEAD
 #max17330reg_A = readRegs(max17330_A)
 #max17330reg_B = readRegs(max17330_B)
 #max17330reg_B.changeBit()
+=======
+>>>>>>> 8b0c1dbcbfa76daf53b9605238f2befce7ddea48
 A17330 = Max17330(max17330_A)
 B17330 = Max17330(max17330_B)
 
@@ -62,7 +66,11 @@ while True:
         A17330.AllowChgB(0x36)
         B17330.AllowChgB(0x76)
         try:
+<<<<<<< HEAD
             battAPerc = A17330.readRepSOC(addr=0x36)
+=======
+            battAPerc = A17330.readRepSOC(addr=0x36,memaddr=0x06,nbytes=2)/100
+>>>>>>> 8b0c1dbcbfa76daf53b9605238f2befce7ddea48
             # battPerc = max17330reg_A.readfrom_mem(0x36, 0x06, 2, 8)
         except:
             OnBoardLed = Pin(25, Pin.OUT)

@@ -10,4 +10,4 @@ class readRegs:
     
     def readRepSOC(self,addr=0x36,memaddr=0x06,addrsize=8):
         data = self.readfrom_mem(addr=addr,memaddr=memaddr,nbytes=2,addrsize=addrsize)
-        return ((data[1] << 8) + data[0]) << 8
+        return ((data[1] << 8) + data[0])/256
