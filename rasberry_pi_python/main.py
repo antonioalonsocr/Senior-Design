@@ -1,10 +1,8 @@
 from machine import Pin, I2C
 from gpio_lcd import GpioLcd
 from LCD_prints import PrintForLCD
-from readRegs import readRegs
 from chipClasses import Max17330
 import utime
-
 
 #utime.sleep(2)
 OnBoardLed = Pin(25, Pin.OUT)
@@ -58,7 +56,7 @@ B17330.AllowChgB(0x76)
 while True:
     
     # Battery screen ======================================================================
-    for i in range(0):
+    for i in range(10):
         A17330.AllowChgB(0x36)
         B17330.AllowChgB(0x76)
         try:
@@ -80,7 +78,7 @@ while True:
     
         
     # Charging Current screen ======================================================================
-    for i in range(5):
+    for i in range(10):
         A17330.AllowChgB(0x36)
         B17330.AllowChgB(0x76)
         try:
