@@ -1,5 +1,5 @@
 # Senior-Design
-raspberry_pi_python folder holds all the files in the Raspberry Pi Pico.
+The ```raspberry_pi_python``` folder holds all the files in the Raspberry Pi Pico.
 Special attention can be paid to ```/raspberry_pi_python/main.py``` as this is the main script that facilitates the communication between the Rasperry Pi Pico, two MAX17330s (by Analog Devices, Inc.), and the LCD.<br><br>
 
 ### Python Libraries
