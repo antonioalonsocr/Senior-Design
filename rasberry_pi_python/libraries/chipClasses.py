@@ -69,5 +69,5 @@ class Max17330(Chip):
         #print(self.readfrom_mem(addr=addr,memaddr=0x0,nbytes=2))
 
     def readAvgVolt(self,addr=0x36):
-        data = self.readfrom_mem(addr=addr,memaddr=0x19,nbytes=2) #0x1A Vcell reg
+        data = self.readfrom_mem(addr=addr,memaddr=0x2A,nbytes=2) #0x1A Vcell reg
         return data*7.8125

@@ -2,7 +2,41 @@ from machine import Pin, I2C
 from gpio_lcd import GpioLcd
 from LCD_prints import PrintForLCD
 from chipClasses import Max17330
+import led_neopix as neopixel
 import utime
+
+
+stripA = neopixel.Neopixel(4, 0, 0, "RGB")
+stripB = neopixel.Neopixel(4, 1, 1, "RGB")
+stripA.brightness(100)
+stripB.brightness(100)
+
+def lightUpLED(battACurr, battBCurr):
+    
+    if battACurr > 5:
+        chgstr = "chg"
+        stripA.fill((255,0,0))
+    elif battACurr < -5:
+        chgstr = "dchg"
+        stripA.fill((0,255,0))
+    else:
+        chgstr = "ntrl"
+        stripA.fill((255,255,255))
+
+    stripA.show()
+    
+    if battBCurr > 5:
+        chgstr = "chg"
+        stripB.fill((255,0,0))
+    elif battBCurr < -5:
+        chgstr = "dchg"
+        stripB.fill((0,255,0))
+    else:
+        chgstr = "ntrl"
+        stripB.fill((255,255,255))
+    
+    stripB.show()
+
 
 #utime.sleep(2)
 OnBoardLed = Pin(25, Pin.OUT)
@@ -73,7 +107,10 @@ while True:
             battBPerc = 0.05*i
         
         p.printRepSOCScreen(battAPerc = battAPerc, battBPerc = battBPerc)
-        
+
+        currA=A17330.readCurrentReg(addr=0x36)
+        currB=B17330.readCurrentReg(addr=0x76)
+        lightUpLED(currA,currB)
         utime.sleep(1)
     
         
@@ -97,6 +134,7 @@ while True:
         print("curr----------------")
         print(currA)
         print(currB)
+        lightUpLED(currA,currB)
         utime.sleep(1)
 
 #utime.sleep(2)
