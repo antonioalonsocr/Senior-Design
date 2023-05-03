@@ -2,6 +2,7 @@ from machine import Pin, I2C
 from gpio_lcd import GpioLcd
 from LCD_prints import PrintForLCD
 from chipClasses import Max17330
+from buttonCode import get_button
 import led_neopix as neopixel
 import utime
 
@@ -87,10 +88,13 @@ B17330.ParEN(addr=0x76)
 A17330.AllowChgB(0x36)
 B17330.AllowChgB(0x76)
 
+buttonPIN = 16
+button = Pin(buttonPIN, Pin.IN, Pin.PULL_UP)
+
 while True:
     
     # Battery screen ======================================================================
-    for i in range(10):
+    while True:
         A17330.AllowChgB(0x36)
         B17330.AllowChgB(0x76)
         try:
@@ -99,19 +103,26 @@ while True:
         except:
             OnBoardLed = Pin(25, Pin.OUT)
             OnBoardLed.value(1)
-            battAPerc = 0.05*i
+            battAPerc = 0.05
             
         try:
             battBPerc = B17330.readRepSOC(addr=0x76)
         except:
-            battBPerc = 0.05*i
+            battBPerc = 0.05
         
         p.printRepSOCScreen(battAPerc = battAPerc, battBPerc = battBPerc)
 
         currA=A17330.readCurrentReg(addr=0x36)
         currB=B17330.readCurrentReg(addr=0x76)
         lightUpLED(currA,currB)
-        utime.sleep(1)
+        for _ in range(10):
+            utime.sleep(0.1)
+            if get_button(button):
+                breakwhile = True
+                break
+        if breakwhile:
+            break
+        
     
         
     # Charging Current screen ======================================================================
