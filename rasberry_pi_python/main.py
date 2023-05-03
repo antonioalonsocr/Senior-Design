@@ -148,6 +148,29 @@ while True:
         lightUpLED(currA,currB)
         utime.sleep(1)
 
+    # Charging Voltage screen ======================================================================
+    for i in range(10):
+        A17330.AllowChgB(0x36)
+        B17330.AllowChgB(0x76)
+        try:
+            voltA = A17330.readCurrentReg(addr=0x36)
+            # battPerc = max17330reg_A.readfrom_mem(0x36, 0x06, 2, 8)
+        except:  
+             OnBoardLed.value(1)
+             voltA = 0.05*i
+        try:
+            voltB = B17330.readCurrentReg(addr=0x76)
+        except:
+            voltB = 0.05*i
+        
+        p.printVoltScreen(battAVolt = voltA, battAVolt = voltB)
+        
+        print("volt----------------")
+        print(voltA)
+        print(voltB)
+        lightUpLED(voltA,voltB)
+        utime.sleep(1)
+
 #utime.sleep(2)
 
 OnBoardLed = Pin(25, Pin.OUT)

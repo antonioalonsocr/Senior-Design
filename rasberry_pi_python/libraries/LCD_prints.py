@@ -94,3 +94,16 @@ class PrintForLCD:
         self.lcd.move_to(0,1)
         self.lcd.putstr(f"Battery B Current: {self.floatToStr(battBCurr)}mA " + chgstr)
 
+    def printVoltScreen(self,battAVolt=0.1,battBVolt=0.1):
+        """Prints live-updating current through Battery A and Battery B"""
+        self.lcd.clear()
+        self.lcd.hide_cursor()
+        self.lcd.move_to(0,0)
+        
+        battAstr = str()
+        self.lcd.putstr(f"Battery A Voltage: {self.floatToStr(battAVolt)}V " + chgstr)
+
+        print(self.floatToStr(battBVolt))
+        self.lcd.move_to(0,1)
+        self.lcd.putstr(f"Battery B Voltage: {self.floatToStr(battBVolt)}V " + chgstr)
+
