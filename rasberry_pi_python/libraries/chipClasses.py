@@ -29,6 +29,12 @@ class Max17330(Chip):
         data = self.twos_comp((data[1] << 8) + data[0])
         return data*0.15625
     
+    def readAvgVolt(self,addr=0x36):
+        data = self.readfrom_mem(addr=addr,memaddr=0xDB,nbytes=2) #0x1A Vcell reg, 0x2A avg, 0x19 avgVcell
+        #print(data)
+        #return ((data[1] << 8) + data[0])*(7.8125*1e-5)
+        return ((data[1] << 8) + data[0])*(0.0003125)
+    
     def readAvgCurr(self,addr=0x36):
         data = self.readfrom_mem(addr=addr,memaddr=0x1D,nbytes=2) #0x28 chgcurr reg
         data = self.twos_comp((data[1] << 8) + data[0])
@@ -67,7 +73,7 @@ class Max17330(Chip):
         #print(bstring2)
         self.i2c.writeto_mem(addr,0x0,bstring2)
         #print(self.readfrom_mem(addr=addr,memaddr=0x0,nbytes=2))
-
-    def readAvgVolt(self,addr=0x36):
-        data = self.readfrom_mem(addr=addr,memaddr=0x2A,nbytes=2) #0x1A Vcell reg
-        return data*7.8125
+    
+class Max77958(Chip):
+    def __init__(self,i2c):
+        super().__init__(i2c)
