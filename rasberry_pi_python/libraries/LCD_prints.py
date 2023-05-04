@@ -1,5 +1,10 @@
+import led_neopix as neopixel
 import utime
 
+stripA = neopixel.Neopixel(4, 0, 0, "RGB")
+stripB = neopixel.Neopixel(4, 1, 1, "RGB")
+stripA.brightness(100)
+stripB.brightness(100)
 
 class PrintForLCD:
     def __init__(self, lcd):
@@ -87,23 +92,50 @@ class PrintForLCD:
         self.lcd.hide_cursor()
         self.lcd.move_to(0,0)
         
+        chgstr = ""
+        if battACurr > 5:
+            chgstr = "chg"
+            stripA.fill((255,0,0))
+            stripA.show()
+        elif battACurr < -5:
+            chgstr = "dchg"
+            stripA.fill((0,255,0))
+            stripA.show()
+        else:
+            chgstr = "ntrl"
+            stripA.fill((255,255,255))
+            stripA.show()
+            
         battAstr = str()
         self.lcd.putstr(f"Battery A Current: {self.floatToStr(battACurr)}mA " + chgstr)
 
+        chgstr = ""
+        if battBCurr > 5:
+            chgstr = "chg"
+            stripB.fill((255,0,0))
+            stripB.show()
+        elif battBCurr < -5:
+            chgstr = "dchg"
+            stripB.fill((0,255,0))
+            stripB.show()
+        else:
+            chgstr = "ntrl"
+            stripB.fill((255,255,255))
+            stripB.show()
         print(self.floatToStr(battBCurr))
         self.lcd.move_to(0,1)
         self.lcd.putstr(f"Battery B Current: {self.floatToStr(battBCurr)}mA " + chgstr)
-
+        
+        
     def printVoltScreen(self,battAVolt=0.1,battBVolt=0.1):
         """Prints live-updating current through Battery A and Battery B"""
         self.lcd.clear()
         self.lcd.hide_cursor()
         self.lcd.move_to(0,0)
         
-        battAstr = str()
-        self.lcd.putstr(f"Battery A Voltage: {self.floatToStr(battAVolt)}V " + chgstr)
+        self.lcd.putstr(f"Battery A Voltage: {self.floatToStr(battAVolt)}V")
 
         print(self.floatToStr(battBVolt))
         self.lcd.move_to(0,1)
-        self.lcd.putstr(f"Battery B Voltage: {self.floatToStr(battBVolt)}V " + chgstr)
+        self.lcd.putstr(f"Battery B Voltage: {self.floatToStr(battBVolt)}V")
 
