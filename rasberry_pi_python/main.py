@@ -88,13 +88,14 @@ B17330.ParEN(addr=0x76)
 A17330.AllowChgB(0x36)
 B17330.AllowChgB(0x76)
 
-buttonPIN = 16
+buttonPIN = 3
 button = Pin(buttonPIN, Pin.IN, Pin.PULL_UP)
 
 while True:
     
     # Battery screen ======================================================================
     while True:
+        breakwhile = False
         A17330.AllowChgB(0x36)
         B17330.AllowChgB(0x76)
         try:
@@ -126,7 +127,8 @@ while True:
     
         
     # Charging Current screen ======================================================================
-    for i in range(10):
+    while True:
+        breakwhile = False
         A17330.AllowChgB(0x36)
         B17330.AllowChgB(0x76)
         try:
@@ -134,11 +136,11 @@ while True:
             # battPerc = max17330reg_A.readfrom_mem(0x36, 0x06, 2, 8)
         except:  
              OnBoardLed.value(1)
-             currA = 0.05*i
+             currA = 0.05
         try:
             currB = B17330.readCurrentReg(addr=0x76)
         except:
-            currB = 0.05*i
+            currB = 0.05
         
         p.printCurrScreen(battACurr = currA, battBCurr = currB)
         
@@ -146,31 +148,47 @@ while True:
         print(currA)
         print(currB)
         lightUpLED(currA,currB)
-        utime.sleep(1)
-
+        for _ in range(10):
+            utime.sleep(0.1)
+            if get_button(button):
+                breakwhile = True
+                break
+        if breakwhile:
+            break
+        
     # Charging Voltage screen ======================================================================
-    for i in range(10):
+    while True:
+        breakwhile = False
         A17330.AllowChgB(0x36)
         B17330.AllowChgB(0x76)
+        
         try:
-            voltA = A17330.readCurrentReg(addr=0x36)
+            voltA = A17330.readAvgVolt(addr=0x36)
             # battPerc = max17330reg_A.readfrom_mem(0x36, 0x06, 2, 8)
         except:  
              OnBoardLed.value(1)
-             voltA = 0.05*i
+             voltA = 9999
         try:
-            voltB = B17330.readCurrentReg(addr=0x76)
+            voltB = B17330.readAvgVolt(addr=0x76)
         except:
-            voltB = 0.05*i
+            voltB = 9999
         
-        p.printVoltScreen(battAVolt = voltA, battAVolt = voltB)
+        currA = A17330.readCurrentReg(addr=0x36)
+        currB = B17330.readCurrentReg(addr=0x76)
+        
+        p.printVoltScreen(battAVolt = voltA, battBVolt = voltB)
         
         print("volt----------------")
         print(voltA)
         print(voltB)
-        lightUpLED(voltA,voltB)
-        utime.sleep(1)
-
+        lightUpLED(currA,currB)
+        for _ in range(10):
+            utime.sleep(0.1)
+            if get_button(button):
+                breakwhile = True
+                break
+        if breakwhile:
+            break
 #utime.sleep(2)
 
 OnBoardLed = Pin(25, Pin.OUT)
@@ -190,4 +208,3 @@ for i in [0.3, 0.4, 0.8]:
     utime.sleep(1)
     p.assignBatteryChar(i, 0)
 '''
-
